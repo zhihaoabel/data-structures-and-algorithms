@@ -63,7 +63,7 @@ def locate_buy_button(page):
         buy_button = page.locator('[data-product-bn]')
         expect(buy_button).not_to_be_empty(timeout=10000)
         # 点击购买按钮
-        buy_button.click()
+        buy_button.click().wait_for_page_load()
     except AssertionError as e:
         logging.error(f"{page.url} 没有定位到购买按钮")
         raise AssertionError(e)
@@ -89,6 +89,7 @@ def locate_forms(page):
         填写个人信息
     """
     try:
+
         forms = page.query_selector('.information-edit')
         expect(forms).not_to_be_empty()
 
