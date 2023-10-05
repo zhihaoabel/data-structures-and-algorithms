@@ -115,6 +115,55 @@ class LinkedList:
 
             node = node.next
 
+    def pop(self):
+        """ Return the first node's value and remove it from the list. """
+        """
+        1. 保存头结点的值
+        2. 将下一个结点赋值给头结点
+        """
+        if self.head is None:
+            return None
+
+        val = self.head.value
+        self.head = self.head.next
+
+        return val
+
+    def insert(self, value, pos):
+        """ Insert value at pos position in the list. If pos is larger than the
+        length of the list, append to the end of the list. """
+        """
+        1. 插入到头结点位置直接调用prepend方法
+        2. 遍历结点并计数。如果索引位置相等，插入结点
+        3. 遍历到尾结点仍未到达指定索引位置，放入末尾
+        """
+        if pos < 0:
+            return
+
+        # 头结点插入
+        if pos == 0:
+            self.prepend(value)
+            return
+
+        counter = 0
+        node = self.head
+        while node.next:
+            counter += 1
+            if pos == counter:
+                new_node = Node(value)
+
+                prev_node = node
+                next_node = node.next
+                new_node.next = next_node
+                prev_node.next = new_node
+                return
+
+            node = node.next
+
+        # 遍历到尾结点仍未到达索引位置
+        if node.next is None:
+            node.next = Node(value)
+
 
 # Test prepend
 linked_list = LinkedList()
@@ -141,7 +190,6 @@ linked_list.append(3)
 assert linked_list.search(1).value == 1, f"list contents: {linked_list.to_list()}"
 assert linked_list.search(4).value == 4, f"list contents: {linked_list.to_list()}"
 
-print("Test remove")
 # Test remove
 linked_list.remove(1)
 assert linked_list.to_list() == [2, 1, 3, 4, 3], f"list contents: {linked_list.to_list()}"
@@ -149,3 +197,17 @@ linked_list.remove(3)
 assert linked_list.to_list() == [2, 1, 4, 3], f"list contents: {linked_list.to_list()}"
 linked_list.remove(3)
 assert linked_list.to_list() == [2, 1, 4], f"list contents: {linked_list.to_list()}"
+
+# Test pop
+value = linked_list.pop()
+assert value == 2, f"list contents: {linked_list.to_list()}"
+assert linked_list.head.value == 1, f"list contents: {linked_list.to_list()}"
+
+print("Test insert")
+# Test insert
+linked_list.insert(5, 0)
+assert linked_list.to_list() == [5, 1, 4], f"list contents: {linked_list.to_list()}"
+linked_list.insert(2, 1)
+assert linked_list.to_list() == [5, 2, 1, 4], f"list contents: {linked_list.to_list()}"
+linked_list.insert(3, 6)
+assert linked_list.to_list() == [5, 2, 1, 4, 3], f"list contents: {linked_list.to_list()}"
