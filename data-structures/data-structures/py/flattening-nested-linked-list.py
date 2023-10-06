@@ -66,7 +66,7 @@ def sort_linked_list(llist: list) -> LinkedList:
     return out
 
 
-def merge(list1: LinkedList, list2: LinkedList) -> LinkedList:
+def merge(list1: LinkedList | None, list2: LinkedList | None) -> LinkedList:
     """
     The arguments list1, list2 must be of type LinkedList.
     The merge() function must return an instance of LinkedList.
@@ -88,6 +88,7 @@ class NestedLinkedList(LinkedList):
     2. 取出结点的value值，即为 LinkedList，递归合并 LinkedList
     3. NestedLinkedList 结点后移
     """
+
     def flatten(self):
         if self.head is None:
             return NestedLinkedList(None)
@@ -102,6 +103,24 @@ class NestedLinkedList(LinkedList):
             current = current.next
 
         return merged_linked_list
+
+    def flatten2(self):
+        """
+        递归的写法
+        :return:
+        """
+        return self._flatten(self.head)  # <-- self.head is a node for NestedLinkedList
+
+    '''  A recursive function '''
+
+    def _flatten(self, node):
+
+        # A termination condition
+        if node.next is None:
+            return merge(node.value, None)  # <-- First argument is a simple LinkedList
+
+        # _flatten() is calling itself untill a termination condition is achieved
+        return merge(node.value, self._flatten(node.next))  # <-- Both arguments are a simple LinkedList each
 
 
 ''' Test merge() function'''
