@@ -12,6 +12,18 @@ class Stack:
         self.head = None
 
     def push(self, data):
+        """
+        This method is used to add an element to the top of the stack.
+
+        Args:
+            data: The data to be added to the stack.
+
+        The method works as follows:
+        - A new node is created with the provided data.
+        - If the stack is empty (i.e., the head is None), the new node becomes the head of the stack.
+        - If the stack is not empty, the new node is added to the top of the stack by setting its next pointer to the current head and then updating the head to the new node.
+        - The number of elements in the stack is incremented by 1.
+        """
         new_node = LinkedListNode(data)
         if self.head is None:
             self.head = new_node
