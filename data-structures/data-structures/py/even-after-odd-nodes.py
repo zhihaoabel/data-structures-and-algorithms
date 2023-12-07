@@ -13,7 +13,7 @@ def even_after_odd(head):
     2. 置换完后重置 permutable。继续从待置换结点往后遍历
     """
 
-    def permutate(head_node, prev_node, permutating_node):
+    def permutate(head_node, prev_node, permutation_node):
         """
         奇数结点前置
 
@@ -23,23 +23,24 @@ def even_after_odd(head):
                 a. 将待置换结点的 next 赋给待置换结点上一个节点的 next
                 b. 使待置换结点的 next 指向偶数结点
                 c. 偶数结点的前一个结点的 next 指向待置换结点
+        :param prev_node:
         :param head_node: 更新的头结点
-        :param permutating_node: 待移位的结点
+        :param permutation_node: 待移位的结点
         :return:
         """
         if head_node.data % 2 == 0:
-            permutating_node.next = head_node
+            permutation_node.next = head_node
             return
 
         node = head_node
         while node.next:
             if node.next.data % 2 == 0:
                 # 将待置换结点的下一个结点赋给待置换结点的上一个结点的 next
-                prev_node.next = permutating_node.next
+                prev_node.next = permutation_node.next
                 # 将待置换结点 next 指向第一个偶数结点
-                permutating_node.next = node.next
+                permutation_node.next = node.next
                 # 更新最后一个奇数结点的 next，使其指向待置换结点
-                node.next = permutating_node
+                node.next = permutation_node
                 return
 
             node = node.next
