@@ -340,7 +340,7 @@ class Tree:
         DFS遍历 tree。
         如果当前结点的值 < value，往当前节点右子树DFS
         如果当前结点的值 > value，往当前节点左子树DFS
-        如果当前结点的值 = value，则删除当前结点有三种情况：
+        如果当前结点的值 = value，则删除当前结点，有三种情况：
             1. 当前结点为叶子节点, 则返回 None, 将其父节点指向当前结点的指针设置为 None
             2. 当前结点有一个子节点, 有右子结点则将其父节点的指针指向右子结点, 无则将其父节点的指针指向左子节点
             3. (后继)当前结点有两个子节点, 找出以 当前节点的右子结点为 子BST 的最小左子节点, 将当前结点的值更新为最小左子节点的值.
@@ -363,6 +363,7 @@ class Tree:
         def contains_searched_node(root_node: Node, deleting_node: Node):
             """
             比较当前结点的子节点是否包含正在查找的值
+            :param deleting_node:
             :param root_node:
             :return:
             """
@@ -380,6 +381,7 @@ class Tree:
         def find_parent(root_node: Node, deleting_node: Node):
             """
             DFS 找出子节点值为 val 的 parent_node
+            :param deleting_node:
             :param root_node:
             :return:
             """
@@ -402,54 +404,81 @@ class Tree:
         def get_deleting_node(parent_node: Node, deleting_node: Node):
             """
             根据 parent_node 找到待删除结点
+            :param deleting_node:
             :param parent_node:
             :return:
             """
             return parent_node.get_left_child() if parent_node.get_left_child().get_value() == deleting_node.get_value() \
                 else parent_node.get_right_child()
 
-        def get_child_node_num(parent_node: Node, delete_node: Node):
+        def get_child_node_num(deleting_node: Node):
             """
             判断待删除的结点类型：叶子结点，有一个子节点，有两个子节点
             0：叶子结点
             1：有一个子节点
             2：有两个子节点
-            :param parent_node:
+            :param deleting_node: 待删除结点
             :return:
             """
             count = 0
-            if parent_node is None:
-                return count
 
-            deleting_node: Node = get_deleting_node(parent_node, delete_node)
             if deleting_node.get_left_child() is not None:
                 count += 1
             if deleting_node.get_right_child() is not None:
                 count += 1
             return count
 
-        def delete_node(root_node: Node, deleting_node: Node):
+        def delete_root_node(root_node: Node):
+            """
+            删除根结点
+            :param root_node: The root node to be deleted
+            :return: None
+            """
+            children_nodes = get_child_node_num(root_node)
+            if children_nodes == 0:
+                self.set_root(None)
+            elif children_nodes == 1:
+                self.set_root(root_node.get_left_child().get_value()
+                              if root_node.get_left_child() is not None
+                              else root_node.get_right_child().get_value())
+            else:
+                delete_two_child_node(root_node)
+
+        def delete_node(root_node: Node, node_to_delete: Node):
             """
             找到待删除结点的父节点，判断待删除结点的结点类型，根据不同类型进行删除操作
-            :param root_node:
-            :return:
+            :param node_to_delete: The node to be deleted
+            :param root_node: The root node of the tree
+            :return: None
             """
             if root_node is None:
                 return
 
-            parent_node: Node = find_parent(root_node, deleting_node)
-            children_nodes = get_child_node_num(parent_node, deleting_node)
-            if children_nodes == 0:
-                delete_leaf_node(parent_node, deleting_node)
-            elif children_nodes == 1:
-                delete_one_child_node(parent_node, deleting_node)
-            else:
-                deleting_node: Node = get_deleting_node(parent_node, deleting_node)
-                delete_two_child_node(deleting_node)
+            # If the node to be deleted is the root node
+            if root_node.get_value() == node_to_delete.get_value():
+                delete_root_node(root_node)
+                return
+
+            parent_node = find_parent(root_node, node_to_delete)
+            deleting_node = get_deleting_node(parent_node, node_to_delete)
+
+            # Map the number of child nodes to the corresponding deleting function
+            delete_func_map = {
+                0: delete_leaf_node,
+                1: delete_one_child_node,
+                2: delete_two_child_node
+            }
+
+            # Get the delete function based on the number of child nodes
+            delete_func = delete_func_map.get(get_child_node_num(deleting_node))
+
+            # Call the delete function
+            delete_func(parent_node, node_to_delete)
 
         def delete_leaf_node(parent_node: Node, deleting_node: Node):
             """
             将左子节点或者右子结点置为 None
+            :param deleting_node:
             :param parent_node:
             :return:
             """
@@ -463,6 +492,7 @@ class Tree:
         def delete_one_child_node(parent_node: Node, deleting_node: Node):
             """
             将parent_node指向待删除结点的指针指向待删除结点的子节点
+            :param deleting_node:
             :param parent_node:
             :return:
             """
